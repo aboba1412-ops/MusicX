@@ -910,7 +910,7 @@ private fun MiniPlayer(song: Song, playing: Boolean, position: Long, duration: L
 
 @Composable
 private fun NavigationBarX(selected: String, onSelect: (String) -> Unit) {
-    val tabs = listOf("Музыка" to Icons.Default.MusicNote, "Избранное" to Icons.Default.Favorite, "Коллекции" to Icons.Default.QueueMusic, "История" to Icons.Default.History, "Тексты" to Icons.Default.Lyrics, "Эквалайзер" to Icons.Default.Equalizer)
+    val tabs = listOf("Музыка" to Icons.Default.MusicNote, "Избранное" to Icons.Default.Favorite, "Онлайн" to Icons.Default.Cloud, "Коллекции" to Icons.Default.QueueMusic, "История" to Icons.Default.History, "Тексты" to Icons.Default.Lyrics, "Эквалайзер" to Icons.Default.Equalizer)
     Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(24.dp)).background(Color(0xF21A1D30)).padding(4.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
         tabs.forEach { (name, icon) ->
             val active = selected == name

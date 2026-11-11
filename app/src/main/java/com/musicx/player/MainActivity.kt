@@ -47,6 +47,7 @@ import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 import java.net.HttpURLConnection
 import java.net.URL
 import java.net.URLEncoder
@@ -163,6 +164,11 @@ fun MusicXApp(player: Player) {
     var position by remember { mutableLongStateOf(0L) }
     var duration by remember { mutableLongStateOf(0L) }
     var search by remember { mutableStateOf("") }
+    var onlineQuery by remember { mutableStateOf("") }
+var onlineTracks by remember { mutableStateOf<List<OnlineTrack>>(emptyList()) }
+var onlineLoading by remember { mutableStateOf(false) }
+var onlineError by remember { mutableStateOf("") }
+val onlineScope = rememberCoroutineScope()
     var favorites by remember { mutableStateOf(prefs.getStringSet("favorites", emptySet())?.toSet() ?: emptySet()) }
     var playlists by remember { mutableStateOf(prefs.getStringSet("playlists", emptySet())?.toList() ?: emptyList()) }
     var history by remember { mutableStateOf(prefs.getString("history", "")!!.split("\n").filter { it.isNotBlank() }) }

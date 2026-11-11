@@ -177,7 +177,6 @@ private suspend fun searchArchiveTracks(query: String): List<ArchiveTrack> =
             connection.disconnect()
         }
     }
-class MainActivity : ComponentActivity() {
     private suspend fun getArchiveAudioUrl(id: String): String? =
     withContext(Dispatchers.IO) {
         val url = URL("https://archive.org/metadata/$id")
@@ -215,6 +214,8 @@ class MainActivity : ComponentActivity() {
             connection.disconnect()
         }
     }
+class MainActivity : ComponentActivity() {
+    
     private var controllerFuture: ListenableFuture<MediaController>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

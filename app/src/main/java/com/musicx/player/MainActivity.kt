@@ -421,7 +421,9 @@ fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
                 onPrevious = { player.seekToPreviousMediaItem() }, onNext = { player.seekToNextMediaItem() },
                 onShuffle = { player.shuffleModeEnabled = !player.shuffleModeEnabled },
                 onRepeat = { player.repeatMode = when (player.repeatMode) { Player.REPEAT_MODE_OFF -> Player.REPEAT_MODE_ALL; Player.REPEAT_MODE_ALL -> Player.REPEAT_MODE_ONE; else -> Player.REPEAT_MODE_OFF } },
-                onSpeed = { showSpeed = true }, onLyrics = { showNowPlaying = false; tab = "Тексты" }
+                onSpeed = { showSpeed = true },
+onPlaybackMode = { showPlaybackMode = true },
+onLyrics = { showNowPlaying = false; tab = "Тексты" }
             )
             if (showSpeed) AlertDialog(onDismissRequest = { showSpeed = false }, title = { Text("Скорость воспроизведения") },
                 text = { Column { listOf(.75f, 1f, 1.25f, 1.5f, 2f).forEach { rate -> TextButton(onClick = { speed = rate; player.setPlaybackSpeed(rate); showSpeed = false }) { Text("${rate}×", color = if (speed == rate) Cyan else Color.White) } } } },
@@ -465,7 +467,8 @@ fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
 private fun NowPlayingScreen(
     song: Song, playing: Boolean, position: Long, duration: Long, shuffle: Boolean, repeatMode: Int, speed: Float,
     onClose: () -> Unit, onSeek: (Long) -> Unit, onToggle: () -> Unit, onPrevious: () -> Unit, onNext: () -> Unit,
-    onShuffle: () -> Unit, onRepeat: () -> Unit, onSpeed: () -> Unit, onLyrics: () -> Unit
+    onShuffle: () -> Unit, onRepeat: () -> Unit, onSpeed: () -> Unit,
+onPlaybackMode: () -> Unit, onLyrics: () -> Unit
 ) {
     Column(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFF30245A), Bg, Bg))).padding(horizontal = 22.dp)) {
         Row(Modifier.fillMaxWidth().padding(top = 22.dp), verticalAlignment = Alignment.CenterVertically) {

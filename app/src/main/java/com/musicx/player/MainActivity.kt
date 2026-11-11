@@ -234,6 +234,11 @@ var onlineTracks by remember { mutableStateOf<List<OnlineTrack>>(emptyList()) }
 var onlineLoading by remember { mutableStateOf(false) }
 var onlineError by remember { mutableStateOf("") }
 val onlineScope = rememberCoroutineScope()
+var archiveTracks by remember {
+    mutableStateOf<List<ArchiveTrack>>(emptyList())
+}
+var archiveLoading by remember { mutableStateOf(false) }
+var archiveError by remember { mutableStateOf("") }
     var favorites by remember { mutableStateOf(prefs.getStringSet("favorites", emptySet())?.toSet() ?: emptySet()) }
     var playlists by remember { mutableStateOf(prefs.getStringSet("playlists", emptySet())?.toList() ?: emptyList()) }
     var history by remember { mutableStateOf(prefs.getString("history", "")!!.split("\n").filter { it.isNotBlank() }) }

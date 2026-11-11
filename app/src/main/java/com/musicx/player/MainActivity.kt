@@ -582,7 +582,28 @@ Column(Modifier.fillMaxSize().padding(horizontal = 18.dp)) {
     ) {
         Text("Искать музыку")
     }
+Spacer(Modifier.height(8.dp))
 
+Button(
+    onClick = {
+        if (onlineQuery.isNotBlank()) {
+            onlineScope.launch {
+                archiveLoading = true
+                archiveError = ""
+                archiveTracks = try {
+                    searchArchiveTracks(onlineQuery.trim())
+                } catch (e: Exception) {
+                    archiveError = "Ошибка поиска в Internet Archive"
+                    emptyList()
+                }
+                archiveLoading = false
+            }
+        }
+    },
+    modifier = Modifier.fillMaxWidth()
+) {
+    Text("Искать в Internet Archive")
+}
     if (onlineLoading) {
         CircularProgressIndicator(color = Violet)
     }

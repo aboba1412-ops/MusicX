@@ -497,8 +497,15 @@ onPlaybackMode: () -> Unit, onLyrics: () -> Unit
             IconButton(onClick = onNext, modifier = Modifier.size(52.dp)) { Icon(Icons.Default.SkipNext, null, tint = Color.White, modifier = Modifier.size(34.dp)) }
             IconButton(onClick = onRepeat) { Icon(if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne else Icons.Default.Repeat, null, tint = if (repeatMode != Player.REPEAT_MODE_OFF) Cyan else Muted) }
         }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            TextButton(onClick = onSpeed) { Icon(Icons.Default.Speed, null); Text("${speed}×") }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+    TextButton(onClick = onPlaybackMode) {
+        Icon(Icons.Default.Repeat, null, tint = Cyan)
+        Text("Режим", color = Color.White)
+    }
+    TextButton(onClick = onSpeed) {
+        Icon(Icons.Default.Speed, null)
+        Text("${speed}×")
+    }
         }
         Spacer(Modifier.weight(1f))
     }

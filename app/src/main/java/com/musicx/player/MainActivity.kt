@@ -48,10 +48,10 @@ import kotlinx.coroutines.delay
 import java.util.Locale
 
 private val Bg = Color(0xFF000000)
-private val SurfaceX = Color(0xFF171225)
-private val Violet = Color(0xFFA970FF)
-private val Cyan = Color(0xFFD0B5FF)
-private val Muted = Color(0xFFAAA1BA)
+private val SurfaceX = Color(0xFF160B10)
+private val Violet = Color(0xFFFF3158)
+private val Cyan = Color(0xFFFF8FA3)
+private val Muted = Color(0xFFB9A6AD)
 private const val PREFS = "musicx_data"
 
 data class Song(val uri: Uri, val title: String, val artist: String, val album: String = "Без альбома")
@@ -61,8 +61,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.statusBarColor = android.graphics.Color.rgb(9, 11, 20)
-        window.navigationBarColor = android.graphics.Color.rgb(9, 11, 20)
+        window.statusBarColor = android.graphics.Color.BLACK
+window.navigationBarColor = android.graphics.Color.BLACK
         setContent { LoadingScreen() }
         val token = SessionToken(this, ComponentName(this, MusicPlaybackService::class.java))
         val future = MediaController.Builder(this, token).buildAsync()
@@ -280,7 +280,7 @@ fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
     }.filter { search.isBlank() || it.title.contains(search, true) || it.artist.contains(search, true) || it.album.contains(search, true) }
 
     MaterialTheme(colorScheme = darkColorScheme(background = Bg, surface = SurfaceX, primary = Violet, secondary = Cyan)) {
-        Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFF19152D), Bg, Bg)))) {
+        Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFF260A14), Bg, Bg)))) {
             Column(Modifier.fillMaxSize().padding(horizontal = 18.dp)) {
                 Spacer(Modifier.height(22.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {

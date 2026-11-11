@@ -428,37 +428,82 @@ onLyrics = { showNowPlaying = false; tab = "Тексты" }
             if (showSpeed) AlertDialog(onDismissRequest = { showSpeed = false }, title = { Text("Скорость воспроизведения") },
                 text = { Column { listOf(.75f, 1f, 1.25f, 1.5f, 2f).forEach { rate -> TextButton(onClick = { speed = rate; player.setPlaybackSpeed(rate); showSpeed = false }) { Text("${rate}×", color = if (speed == rate) Cyan else Color.White) } } } },
                 confirmButton = { TextButton(onClick = { showSpeed = false }) { Text("Закрыть") } })
-            if (showPlaybackMode) AlertDialog(
+            
+if (showPlaybackMode) AlertDialog(
     onDismissRequest = { showPlaybackMode = false },
-    title = { Text("Режим воспроизведения", color = Color.White) },
+    title = {
+        Text(
+            "Режим воспроизведения",
+            color = Color.White,
+            fontWeight = FontWeight.Bold
+        )
+    },
     text = {
-        Column {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text("ПОВТОР", color = Muted, fontSize = 11.sp)
+
             TextButton(onClick = {
                 player.repeatMode = Player.REPEAT_MODE_OFF
                 showPlaybackMode = false
-            }) { Text("Без повтора") }
+            }) {
+                Icon(Icons.Default.Repeat, null, tint = if (player.repeatMode == Player.REPEAT_MODE_OFF) Cyan else Muted)
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    if (player.repeatMode == Player.REPEAT_MODE_OFF) "✓ Без повтора" else "Без повтора",
+                    color = if (player.repeatMode == Player.REPEAT_MODE_OFF) Cyan else Color.White
+                )
+            }
 
             TextButton(onClick = {
                 player.repeatMode = Player.REPEAT_MODE_ONE
                 showPlaybackMode = false
-            }) { Text("Повтор одного трека") }
+            }) {
+                Icon(Icons.Default.RepeatOne, null, tint = if (player.repeatMode == Player.REPEAT_MODE_ONE) Cyan else Muted)
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    if (player.repeatMode == Player.REPEAT_MODE_ONE) "✓ Повтор одного трека" else "Повтор одного трека",
+                    color = if (player.repeatMode == Player.REPEAT_MODE_ONE) Cyan else Color.White
+                )
+            }
 
             TextButton(onClick = {
                 player.repeatMode = Player.REPEAT_MODE_ALL
                 showPlaybackMode = false
-            }) { Text("Повтор очереди") }
+            }) {
+                Icon(Icons.Default.Repeat, null, tint = if (player.repeatMode == Player.REPEAT_MODE_ALL) Cyan else Muted)
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    if (player.repeatMode == Player.REPEAT_MODE_ALL) "✓ Повтор очереди" else "Повтор очереди",
+                    color = if (player.repeatMode == Player.REPEAT_MODE_ALL) Cyan else Color.White
+                )
+            }
+
+            HorizontalDivider(color = Muted.copy(alpha = 0.25f))
+            Text("ПЕРЕМЕШИВАНИЕ", color = Muted, fontSize = 11.sp)
 
             TextButton(onClick = {
                 player.shuffleModeEnabled = !player.shuffleModeEnabled
             }) {
-                Text(if (player.shuffleModeEnabled) "✓ Перемешивание включено" else "Перемешивание выключено")
+                Icon(
+                    Icons.Default.Shuffle,
+                    null,
+                    tint = if (player.shuffleModeEnabled) Cyan else Muted
+                )
+                Spacer(Modifier.width(12.dp))
+                Text(
+                    if (player.shuffleModeEnabled) "✓ Перемешивание включено" else "Перемешивание выключено",
+                    color = if (player.shuffleModeEnabled) Cyan else Color.White
+                )
             }
         }
     },
     confirmButton = {
-        TextButton(onClick = { showPlaybackMode = false }) { Text("Закрыть") }
+        TextButton(onClick = { showPlaybackMode = false }) {
+            Text("Готово", color = Cyan)
+        }
     }
 )
+
         }
     }
 }

@@ -124,6 +124,7 @@ fun MusicXApp(player: Player) {
     var eqEnabled by remember { mutableStateOf(false) }
     var speed by remember { mutableFloatStateOf(1f) }
     var showSpeed by remember { mutableStateOf(false) }
+    var showPlaybackMode by remember { mutableStateOf(false) }
     var showNowPlaying by remember { mutableStateOf(false) }
 BackHandler(
     enabled = showNowPlaying || showSpeed || showCreatePlaylist ||

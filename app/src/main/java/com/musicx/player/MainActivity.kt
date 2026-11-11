@@ -646,7 +646,74 @@ Button(
                 Icon(Icons.Default.PlayArrow, null, tint = Violet)
             }
         }
-    }
+          item {
+            if (archiveLoading) {
+                CircularProgressIndicator(color = Violet)
+            }
+            if (archiveError.isNotEmpty()) {
+                Text(archiveError, color = Color.Red)
+            }
+            if (archiveTracks.isNotEmpty()) {
+                Text(
+                    "INTERNET ARCHIVE",
+                    color = Violet,
+                    fontSize = 16.sp
+                )
+            }
+        }
+
+        items(archiveTracks) { track ->
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(SurfaceX)
+                    .clickable {
+                        onlineScope.launch {
+                            archiveLoading = true
+                            archiveError = ""
+
+                            val audioUrl = try {
+                                getArchiveAudioUrl(track.id)
+                            } catch (e: Exception) {
+                                null
+                            }
+
+                            if (audioUrl != null) {
+                                val song = Song(
+                                    Uri.parse(audioUrl),
+                                    track.title,
+                                    track.artist,
+                                    "Internet Archive"
+                                )
+                                addSongs(listOf(song))
+                                player.seekTo(player.mediaItemCount - 1, 0)
+                                player.play()
+                            } else {
+                                archiveError = "Аудиофайл не найден"
+                            }
+
+                            archiveLoading = false
+                        }
+                    }
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Default.MusicNote, null, tint = Violet)
+                Column(
+                    Modifier.weight(1f).padding(start = 12.dp)
+                ) {
+                    Text(track.title, color = Color.White)
+                    Text(track.artist, color = Muted, fontSize = 12.sp)
+                    Text(
+                        track.license,
+                        color = Muted,
+                        fontSize = 10.sp
+                    )
+                }
+                Icon(Icons.Default.PlayArrow, null, tint = Violet)
+            }
+        }  }
 }
                     "История" -> {
                         Text("Недавно прослушано", color = Color.White, fontWeight = FontWeight.SemiBold)

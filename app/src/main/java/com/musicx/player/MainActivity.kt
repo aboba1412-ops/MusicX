@@ -111,7 +111,72 @@ private suspend fun searchAudiusTracks(query: String): List<OnlineTrack> =
             connection.disconnect()
         }
     }
+data class ArchiveTrack(
+    val id: String,
+    val title: String,
+    val artist: String,
+    val license: String
+)
 
+private suspend fun searchArchiveTracks(query: String): List<ArchiveTrack> =
+    withContext(Dispatchers.IO) {
+        val encoded = URLEncoder.encode(
+            "mediatype:audio AND \"$query\"",
+            "UTF-8"
+        )
+
+        val url = URL(
+            "https://archive.org/advancedsearch.php?q=$encoded" +
+                "&fl%5B%5D=identifier&fl%5B%5D=title" +
+                "&fl%5B%5D=creator&fl%5B%5D=licenseurl" +
+                "&rows=30&output=json"
+        )
+
+        val connection = url.openConnection() as HttpURLConnection
+
+        try {
+            connection.connectTimeout = 15000
+            connection.readTimeout = 15000
+
+            val response = connection.inputStream.bufferedReader().use {
+                it.readText()
+            }
+
+            val docs = JSONObject(response)
+                .optJSONObject("response")
+                ?.optJSONArray("docs")
+                ?: return@withContext emptyList()
+
+            buildList {
+                for (i in 0 until docs.length()) {
+                    val item = docs.getJSONObject(i)
+                    val license = item.optString("licenseurl")
+                    val lower = license.lowercase(Locale.ROOT)
+
+                    val allowed =
+                        lower.contains("creativecommons.org/licenses/by/") ||
+                        lower.contains("creativecommons.org/publicdomain/zero/") ||
+                        lower.contains("creativecommons.org/publicdomain/mark/")
+
+                    if (!allowed) continue
+
+                    val id = item.optString("identifier")
+                    if (id.isBlank()) continue
+
+                    add(
+                        ArchiveTrack(
+                            id = id,
+                            title = item.optString("title", "Без названия"),
+                            artist = item.optString("creator", "Неизвестный автор"),
+                            license = license
+                        )
+                    )
+                }
+            }
+        } finally {
+            connection.disconnect()
+        }
+    }
 class MainActivity : ComponentActivity() {
     private var controllerFuture: ListenableFuture<MediaController>? = null
 

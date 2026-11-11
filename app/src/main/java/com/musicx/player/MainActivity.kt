@@ -47,11 +47,11 @@ import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.delay
 import java.util.Locale
 
-private val Bg = Color(0xFF090B14)
-private val SurfaceX = Color(0xFF171B2B)
-private val Violet = Color(0xFF9B7BFF)
-private val Cyan = Color(0xFF55E6D1)
-private val Muted = Color(0xFF9299B2)
+private val Bg = Color(0xFF000000)
+private val SurfaceX = Color(0xFF171225)
+private val Violet = Color(0xFFA970FF)
+private val Cyan = Color(0xFFD0B5FF)
+private val Muted = Color(0xFFAAA1BA)
 private const val PREFS = "musicx_data"
 
 data class Song(val uri: Uri, val title: String, val artist: String, val album: String = "Без альбома")
@@ -508,41 +508,133 @@ if (showPlaybackMode) AlertDialog(
     }
 }
 
+
 @Composable
 private fun NowPlayingScreen(
     song: Song, playing: Boolean, position: Long, duration: Long, shuffle: Boolean, repeatMode: Int, speed: Float,
     onClose: () -> Unit, onSeek: (Long) -> Unit, onToggle: () -> Unit, onPrevious: () -> Unit, onNext: () -> Unit,
     onShuffle: () -> Unit, onRepeat: () -> Unit, onSpeed: () -> Unit,
-onPlaybackMode: () -> Unit, onLyrics: () -> Unit
+    onPlaybackMode: () -> Unit, onLyrics: () -> Unit
 ) {
-    Column(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFF30245A), Bg, Bg))).padding(horizontal = 22.dp)) {
-        Row(Modifier.fillMaxWidth().padding(top = 22.dp), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onClose) { Icon(Icons.Default.KeyboardArrowDown, "Закрыть", tint = Color.White) }
-            Text("СЕЙЧАС ИГРАЕТ", color = Muted, fontSize = 11.sp, letterSpacing = 2.sp, modifier = Modifier.weight(1f))
-            IconButton(onClick = onLyrics) { Icon(Icons.Default.Lyrics, "Текст песни", tint = Cyan) }
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    listOf(Color(0xFF24143D), Color(0xFF090610), Color.Black)
+                )
+            )
+            .padding(horizontal = 24.dp)
+    ) {
+        Row(
+            Modifier.fillMaxWidth().padding(top = 18.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onClose) {
+                Icon(Icons.Default.KeyboardArrowDown, "Закрыть", tint = Color.White)
+            }
+            Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("СЕЙЧАС ИГРАЕТ", color = Muted, fontSize = 10.sp, letterSpacing = 2.sp)
+                Text("MusicX Premium", color = Color.White, fontSize = 12.sp)
+            }
+            IconButton(onClick = onLyrics) {
+                Icon(Icons.Default.Lyrics, "Текст песни", tint = Cyan)
+            }
         }
-        Spacer(Modifier.weight(1f))
-        Box(Modifier.fillMaxWidth().aspectRatio(1f).clip(RoundedCornerShape(32.dp)).background(Brush.linearGradient(listOf(Violet, Color(0xFF1A9C9A), Color(0xFF171A2B)))), contentAlignment = Alignment.Center) {
-            Icon(Icons.Default.GraphicEq, null, tint = Color.White.copy(alpha = .9f), modifier = Modifier.size(110.dp))
+
+        Spacer(Modifier.weight(0.7f))
+
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(22.dp))
+                .background(
+                    Brush.linearGradient(
+                        listOf(Color(0xFFB66DFF), Color(0xFF5925A8), Color(0xFF171020))
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                Icons.Default.GraphicEq,
+                null,
+                tint = Color.White.copy(alpha = 0.9f),
+                modifier = Modifier.size(100.dp)
+            )
         }
+
         Spacer(Modifier.height(30.dp))
-        Text(song.title, color = Color.White, fontSize = 23.sp, fontWeight = FontWeight.Bold, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        Text(song.artist, color = Muted, fontSize = 14.sp)
-        Spacer(Modifier.height(20.dp))
-        Slider(value = position.toFloat().coerceIn(0f, duration.coerceAtLeast(1).toFloat()), onValueChange = { onSeek(it.toLong()) }, valueRange = 0f..duration.coerceAtLeast(1).toFloat(), colors = SliderDefaults.colors(thumbColor = Cyan, activeTrackColor = Violet))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    song.title,
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(song.artist, color = Muted, fontSize = 14.sp)
+            }
+            Icon(Icons.Default.Favorite, null, tint = Violet, modifier = Modifier.size(25.dp))
+        }
+
+        Spacer(Modifier.height(22.dp))
+
+        Slider(
+            value = position.toFloat().coerceIn(0f, duration.coerceAtLeast(1).toFloat()),
+            onValueChange = { onSeek(it.toLong()) },
+            valueRange = 0f..duration.coerceAtLeast(1).toFloat(),
+            colors = SliderDefaults.colors(
+                thumbColor = Color.White,
+                activeTrackColor = Violet,
+                inactiveTrackColor = Color(0xFF40334F)
+            )
+        )
+
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             Text(formatTime(position), color = Muted, fontSize = 11.sp)
             Text(formatTime(duration), color = Muted, fontSize = 11.sp)
         }
-        Spacer(Modifier.height(12.dp))
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onShuffle) { Icon(Icons.Default.Shuffle, null, tint = if (shuffle) Cyan else Muted) }
-            IconButton(onClick = onPrevious, modifier = Modifier.size(52.dp)) { Icon(Icons.Default.SkipPrevious, null, tint = Color.White, modifier = Modifier.size(34.dp)) }
-            IconButton(onClick = onToggle, modifier = Modifier.size(70.dp).clip(CircleShape).background(Violet)) { Icon(if (playing) Icons.Default.Pause else Icons.Default.PlayArrow, null, tint = Color.White, modifier = Modifier.size(40.dp)) }
-            IconButton(onClick = onNext, modifier = Modifier.size(52.dp)) { Icon(Icons.Default.SkipNext, null, tint = Color.White, modifier = Modifier.size(34.dp)) }
-            IconButton(onClick = onRepeat) { Icon(if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne else Icons.Default.Repeat, null, tint = if (repeatMode != Player.REPEAT_MODE_OFF) Cyan else Muted) }
+
+        Spacer(Modifier.height(16.dp))
+
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onShuffle) {
+                Icon(Icons.Default.Shuffle, null, tint = if (shuffle) Cyan else Muted)
+            }
+            IconButton(onClick = onPrevious, modifier = Modifier.size(52.dp)) {
+                Icon(Icons.Default.SkipPrevious, null, tint = Color.White, modifier = Modifier.size(36.dp))
+            }
+            IconButton(
+                onClick = onToggle,
+                modifier = Modifier.size(68.dp).clip(CircleShape).background(Violet)
+            ) {
+                Icon(
+                    if (playing) Icons.Default.Pause else Icons.Default.PlayArrow,
+                    null,
+                    tint = Color.Black,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+            IconButton(onClick = onNext, modifier = Modifier.size(52.dp)) {
+                Icon(Icons.Default.SkipNext, null, tint = Color.White, modifier = Modifier.size(36.dp))
+            }
+            IconButton(onClick = onRepeat) {
+                Icon(
+                    if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne else Icons.Default.Repeat,
+                    null,
+                    tint = if (repeatMode != Player.REPEAT_MODE_OFF) Cyan else Muted
+                )
+            }
         }
-        
+
         Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
             Text(
                 (if (shuffle) "Перемешивание • " else "") + when (repeatMode) {
@@ -556,18 +648,20 @@ onPlaybackMode: () -> Unit, onLyrics: () -> Unit
         }
 
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-    TextButton(onClick = onPlaybackMode) {
-        Icon(Icons.Default.Repeat, null, tint = Cyan)
-        Text("Режим", color = Color.White)
-    }
-    TextButton(onClick = onSpeed) {
-        Icon(Icons.Default.Speed, null)
-        Text("${speed}×")
-    }
+            TextButton(onClick = onPlaybackMode) {
+                Icon(Icons.Default.Repeat, null, tint = Cyan)
+                Text("Режим", color = Color.White)
+            }
+            TextButton(onClick = onSpeed) {
+                Icon(Icons.Default.Speed, null, tint = Cyan)
+                Text("${speed}×", color = Color.White)
+            }
         }
-        Spacer(Modifier.weight(1f))
+
+        Spacer(Modifier.weight(0.5f))
     }
 }
+
 
 @Composable
 private fun EmptyLibrary(onImport: () -> Unit, onScan: () -> Unit) {

@@ -426,6 +426,37 @@ fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
             if (showSpeed) AlertDialog(onDismissRequest = { showSpeed = false }, title = { Text("Скорость воспроизведения") },
                 text = { Column { listOf(.75f, 1f, 1.25f, 1.5f, 2f).forEach { rate -> TextButton(onClick = { speed = rate; player.setPlaybackSpeed(rate); showSpeed = false }) { Text("${rate}×", color = if (speed == rate) Cyan else Color.White) } } } },
                 confirmButton = { TextButton(onClick = { showSpeed = false }) { Text("Закрыть") } })
+            if (showPlaybackMode) AlertDialog(
+    onDismissRequest = { showPlaybackMode = false },
+    title = { Text("Режим воспроизведения", color = Color.White) },
+    text = {
+        Column {
+            TextButton(onClick = {
+                player.repeatMode = Player.REPEAT_MODE_OFF
+                showPlaybackMode = false
+            }) { Text("Без повтора") }
+
+            TextButton(onClick = {
+                player.repeatMode = Player.REPEAT_MODE_ONE
+                showPlaybackMode = false
+            }) { Text("Повтор одного трека") }
+
+            TextButton(onClick = {
+                player.repeatMode = Player.REPEAT_MODE_ALL
+                showPlaybackMode = false
+            }) { Text("Повтор очереди") }
+
+            TextButton(onClick = {
+                player.shuffleModeEnabled = !player.shuffleModeEnabled
+            }) {
+                Text(if (player.shuffleModeEnabled) "✓ Перемешивание включено" else "Перемешивание выключено")
+            }
+        }
+    },
+    confirmButton = {
+        TextButton(onClick = { showPlaybackMode = false }) { Text("Закрыть") }
+    }
+)
         }
     }
 }

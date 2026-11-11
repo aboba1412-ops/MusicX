@@ -542,6 +542,19 @@ onPlaybackMode: () -> Unit, onLyrics: () -> Unit
             IconButton(onClick = onNext, modifier = Modifier.size(52.dp)) { Icon(Icons.Default.SkipNext, null, tint = Color.White, modifier = Modifier.size(34.dp)) }
             IconButton(onClick = onRepeat) { Icon(if (repeatMode == Player.REPEAT_MODE_ONE) Icons.Default.RepeatOne else Icons.Default.Repeat, null, tint = if (repeatMode != Player.REPEAT_MODE_OFF) Cyan else Muted) }
         }
+        
+        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Text(
+                (if (shuffle) "Перемешивание • " else "") + when (repeatMode) {
+                    Player.REPEAT_MODE_ONE -> "Повтор трека"
+                    Player.REPEAT_MODE_ALL -> "Повтор очереди"
+                    else -> "Без повтора"
+                },
+                color = Muted,
+                fontSize = 11.sp
+            )
+        }
+
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
     TextButton(onClick = onPlaybackMode) {
         Icon(Icons.Default.Repeat, null, tint = Cyan)

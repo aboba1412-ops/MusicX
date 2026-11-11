@@ -281,16 +281,75 @@ fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
 
     MaterialTheme(colorScheme = darkColorScheme(background = Bg, surface = SurfaceX, primary = Violet, secondary = Cyan)) {
         Box(Modifier.fillMaxSize().background(Brush.verticalGradient(listOf(Color(0xFF260A14), Bg, Bg)))) {
-            Column(Modifier.fillMaxSize().padding(horizontal = 18.dp)) {
-                Spacer(Modifier.height(22.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Column(Modifier.weight(1f)) {
-                        Text("MUSICX 2.0", color = Cyan, fontSize = 11.sp, fontWeight = FontWeight.Bold, letterSpacing = 3.sp)
-                        Text(tab, color = Color.White, fontSize = 29.sp, fontWeight = FontWeight.Bold)
-                    }
-                    IconButton(onClick = { importLauncher.launch(arrayOf("audio/*")) }) { Icon(Icons.Default.Add, "Добавить музыку", tint = Color.White) }
-                }
-                Spacer(Modifier.height(14.dp))
+            
+Column(Modifier.fillMaxSize().padding(horizontal = 18.dp)) {
+    Spacer(Modifier.height(18.dp))
+
+    Row(
+        Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            Modifier
+                .size(46.dp)
+                .clip(CircleShape)
+                .background(
+                    Brush.linearGradient(
+                        listOf(Color(0xFFFF3158), Color(0xFF9E1238))
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                "M",
+                color = Color.White,
+                fontSize = 25.sp,
+                fontWeight = FontWeight.Black
+            )
+        }
+
+        Spacer(Modifier.width(12.dp))
+
+        Column(Modifier.weight(1f)) {
+            Text(
+                "MUSICX PREMIUM",
+                color = Violet,
+                fontSize = 10.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 2.sp
+            )
+            Text(
+                tab,
+                color = Color.White,
+                fontSize = 27.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                "ТВОЯ МУЗЫКА. ТВОИ ПРАВИЛА.",
+                color = Muted,
+                fontSize = 9.sp,
+                letterSpacing = 1.sp
+            )
+        }
+
+        IconButton(
+            onClick = { importLauncher.launch(arrayOf("audio/*")) },
+            modifier = Modifier
+                .size(46.dp)
+                .clip(CircleShape)
+                .background(SurfaceX)
+        ) {
+            Icon(
+                Icons.Default.Add,
+                "Добавить музыку",
+                tint = Violet,
+                modifier = Modifier.size(26.dp)
+            )
+        }
+    }
+
+    Spacer(Modifier.height(20.dp))
+
                 when (tab) {
                     "Музыка", "Избранное" -> {
                         OutlinedTextField(value = search, onValueChange = { search = it }, modifier = Modifier.fillMaxWidth(), singleLine = true,

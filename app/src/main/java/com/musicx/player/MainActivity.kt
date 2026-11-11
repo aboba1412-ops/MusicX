@@ -178,6 +178,43 @@ private suspend fun searchArchiveTracks(query: String): List<ArchiveTrack> =
         }
     }
 class MainActivity : ComponentActivity() {
+    private suspend fun getArchiveAudioUrl(id: String): String? =
+    withContext(Dispatchers.IO) {
+        val url = URL("https://archive.org/metadata/$id")
+        val connection = url.openConnection() as HttpURLConnection
+
+        try {
+            connection.connectTimeout = 15000
+            connection.readTimeout = 15000
+
+            val response = connection.inputStream.bufferedReader().use {
+                it.readText()
+            }
+
+            val files = JSONObject(response).optJSONArray("files")
+                ?: return@withContext null
+
+            for (i in 0 until files.length()) {
+                val file = files.getJSONObject(i)
+                val name = file.optString("name")
+                val lower = name.lowercase(Locale.ROOT)
+
+                if (
+                    lower.endsWith(".mp3") ||
+                    lower.endsWith(".m4a") ||
+                    lower.endsWith(".ogg") ||
+                    lower.endsWith(".flac") ||
+                    lower.endsWith(".wav")
+                ) {
+                    return@withContext "https://archive.org/download/$id/${Uri.encode(name, "/")}"
+                }
+            }
+
+            null
+        } finally {
+            connection.disconnect()
+        }
+    }
     private var controllerFuture: ListenableFuture<MediaController>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -127,11 +127,12 @@ fun MusicXApp(player: Player) {
     var showPlaybackMode by remember { mutableStateOf(false) }
     var showNowPlaying by remember { mutableStateOf(false) }
 BackHandler(
-    enabled = showNowPlaying || showSpeed || showCreatePlaylist ||
+    enabled = showNowPlaying || showSpeed || showPlaybackMode || showCreatePlaylist ||
             songToAdd != null || selectedPlaylist != null || tab != "Музыка"
 ) {
     when {
         showSpeed -> showSpeed = false
+        showPlaybackMode -> showPlaybackMode = false
         songToAdd != null -> songToAdd = null
         showCreatePlaylist -> showCreatePlaylist = false
         showNowPlaying -> showNowPlaying = false

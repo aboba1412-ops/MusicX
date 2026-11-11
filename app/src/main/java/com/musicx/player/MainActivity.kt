@@ -319,7 +319,7 @@ fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
                         Text("Недавно прослушано", color = Color.White, fontWeight = FontWeight.SemiBold)
                         Spacer(Modifier.height(10.dp))
                         if (visibleSongs.isEmpty()) Text("История появится после прослушивания музыки.", color = Muted)
-                        else LazyColumn(verticalArrangement, contentPadding = PaddingValues(bottom = 180.dp) = Arrangement.spacedBy(7.dp)) {
+                        else LazyColumn(verticalArrangement = Arrangement.spacedBy(7.dp), contentPadding = PaddingValues(bottom = 180.dp)) {
                             items(visibleSongs) { song ->
                                 SongRow(song, songs.indexOf(song) == currentIndex, song.uri.toString() in favorites,
                                     onClick = { player.seekTo(songs.indexOf(song), 0); player.play() },
@@ -352,7 +352,7 @@ fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
                                 Text(selectedPlaylist ?: "", color = Color.White, fontWeight = FontWeight.Bold)
                             }
                             if (visibleSongs.isEmpty()) Text("В этом плейлисте пока нет треков.", color = Muted)
-                            else LazyColumn(verticalArrangement, contentPadding = PaddingValues(bottom = 180.dp) = Arrangement.spacedBy(7.dp)) {
+                            else LazyColumn(verticalArrangement = Arrangement.spacedBy(7.dp), contentPadding = PaddingValues(bottom = 180.dp)) {
                                 items(visibleSongs) { song -> SongRow(song, songs.indexOf(song) == currentIndex, song.uri.toString() in favorites,
                                     onClick = { player.seekTo(songs.indexOf(song), 0); player.play() }, onFavorite = {
                                         favorites = if (song.uri.toString() in favorites) favorites - song.uri.toString() else favorites + song.uri.toString()
@@ -364,7 +364,7 @@ fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
                                 Text("Плейлисты и альбомы", color = Color.White, fontWeight = FontWeight.SemiBold, modifier = Modifier.weight(1f))
                                 TextButton(onClick = { showCreatePlaylist = true }) { Icon(Icons.Default.Add, null); Text("Плейлист") }
                             }
-                            LazyColumn(verticalArrangement, contentPadding = PaddingValues(bottom = 180.dp) = Arrangement.spacedBy(8.dp)) {
+                            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(bottom = 180.dp)) {
                                 items(playlists) { name ->
                                     val count = (prefs.getStringSet("playlist_$name", emptySet()) ?: emptySet()).size
                                     Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).background(SurfaceX).clickable { selectedPlaylist = name }.padding(15.dp), verticalAlignment = Alignment.CenterVertically) {

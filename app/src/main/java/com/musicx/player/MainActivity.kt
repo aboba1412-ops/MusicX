@@ -45,6 +45,12 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
+import java.net.URLEncoder
+import org.json.JSONObject
 import java.util.Locale
 
 private val Bg = Color(0xFF000000)
@@ -55,6 +61,55 @@ private val Muted = Color(0xFFB9A6AD)
 private const val PREFS = "musicx_data"
 
 data class Song(val uri: Uri, val title: String, val artist: String, val album: String = "Без альбома")
+data class OnlineTrack(
+    val id: String,
+    val title: String,
+    val artist: String,
+    val artwork: String?
+)
+
+private suspend fun searchAudiusTracks(query: String): List<OnlineTrack> =
+    withContext(Dispatchers.IO) {
+        val encoded = URLEncoder.encode(query, "UTF-8")
+        val url = URL("https://api.audius.co/v1/tracks/search?query=$encoded&limit=25")
+        val connection = url.openConnection() as HttpURLConnection
+
+        try {
+            connection.connectTimeout = 15000
+            connection.readTimeout = 15000
+            connection.requestMethod = "GET"
+
+            val response = connection.inputStream.bufferedReader().use { it.readText() }
+            val data = JSONObject(response).optJSONArray("data")
+                ?: return@withContext emptyList()
+
+            buildList {
+                for (i in 0 until data.length()) {
+                    val track = data.getJSONObject(i)
+                    val id = track.optString("id")
+                    if (id.isBlank()) continue
+
+                    val artist = track.optJSONObject("user")
+                        ?.optString("name") ?: "Audius"
+
+                    val artwork = track.optJSONObject("artwork")
+                        ?.optString("150x150")
+                        ?.takeIf { it.startsWith("https://") }
+
+                    add(
+                        OnlineTrack(
+                            id = id,
+                            title = track.optString("title", "Без названия"),
+                            artist = artist,
+                            artwork = artwork
+                        )
+                    )
+                }
+            }
+        } finally {
+            connection.disconnect()
+        }
+    }
 
 class MainActivity : ComponentActivity() {
     private var controllerFuture: ListenableFuture<MediaController>? = null

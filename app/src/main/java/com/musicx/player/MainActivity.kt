@@ -437,6 +437,89 @@ Column(Modifier.fillMaxSize().padding(horizontal = 18.dp)) {
                             }
                         }
                     }
+                    "Онлайн" -> {
+    OutlinedTextField(
+        value = onlineQuery,
+        onValueChange = { onlineQuery = it },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+        placeholder = { Text("Найти музыку в Audius") },
+        leadingIcon = { Icon(Icons.Default.Search, null) },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            focusedBorderColor = Violet,
+            unfocusedBorderColor = Muted
+        )
+    )
+
+    Spacer(Modifier.height(10.dp))
+
+    Button(
+        onClick = {
+            if (onlineQuery.isNotBlank()) {
+                onlineScope.launch {
+                    onlineLoading = true
+                    onlineError = ""
+                    onlineTracks = try {
+                        searchAudiusTracks(onlineQuery.trim())
+                    } catch (e: Exception) {
+                        onlineError = "Ошибка загрузки. Проверь интернет."
+                        emptyList()
+                    }
+                    onlineLoading = false
+                }
+            }
+        },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text("Искать музыку")
+    }
+
+    if (onlineLoading) {
+        CircularProgressIndicator(color = Violet)
+    }
+
+    if (onlineError.isNotEmpty()) {
+        Text(onlineError, color = Color.Red)
+    }
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(bottom = 180.dp)
+    ) {
+        items(onlineTracks) { track ->
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(SurfaceX)
+                    .clickable {
+                        val song = Song(
+                            Uri.parse("https://api.audius.co/v1/tracks/${track.id}/stream"),
+                            track.title,
+                            track.artist,
+                            "Audius"
+                        )
+                        addSongs(listOf(song))
+                        player.seekTo(player.mediaItemCount - 1, 0)
+                        player.play()
+                    }
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Default.MusicNote, null, tint = Violet)
+                Column(
+                    Modifier.weight(1f).padding(start = 12.dp)
+                ) {
+                    Text(track.title, color = Color.White)
+                    Text(track.artist, color = Muted, fontSize = 12.sp)
+                }
+                Icon(Icons.Default.PlayArrow, null, tint = Violet)
+            }
+        }
+    }
+}
                     "История" -> {
                         Text("Недавно прослушано", color = Color.White, fontWeight = FontWeight.SemiBold)
                         Spacer(Modifier.height(10.dp))

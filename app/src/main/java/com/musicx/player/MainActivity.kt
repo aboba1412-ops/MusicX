@@ -12,7 +12,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -124,7 +124,22 @@ fun MusicXApp(player: Player) {
     var speed by remember { mutableFloatStateOf(1f) }
     var showSpeed by remember { mutableStateOf(false) }
     var showNowPlaying by remember { mutableStateOf(false) }
-
+BackHandler(
+    enabled = showNowPlaying || showSpeed || showCreatePlaylist ||
+            songToAdd != null || selectedPlaylist != null || tab != "Музыка"
+) {
+    when {
+        showSpeed -> showSpeed = false
+        songToAdd != null -> songToAdd = null
+        showCreatePlaylist -> showCreatePlaylist = false
+        showNowPlaying -> showNowPlaying = false
+        selectedPlaylist != null -> selectedPlaylist = null
+        tab != "Музыка" -> {
+            tab = "Музыка"
+            search = ""
+        }
+    }
+}
     fun loadLyrics() {
         val key = player.currentMediaItem?.mediaId.orEmpty()
         lyrics = prefs.getString("lyrics_$key", "") ?: ""

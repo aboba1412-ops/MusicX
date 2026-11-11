@@ -186,7 +186,7 @@ fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
                 }
             }
         }
-        addSongs(found, replace = true)
+        addSongs(found)
     }
 
     val notificationPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }

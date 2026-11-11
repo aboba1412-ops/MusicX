@@ -129,18 +129,45 @@ fun MusicXApp(player: Player) {
         val key = player.currentMediaItem?.mediaId.orEmpty()
         lyrics = prefs.getString("lyrics_$key", "") ?: ""
     }
-    fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
-        if (newSongs.isEmpty()) return
-        val merged = if (replace) newSongs else (songs + newSongs).distinctBy { it.uri.toString() }
-        songs = merged
-        val items = merged.map { song ->
-            MediaItem.Builder().setUri(song.uri).setMediaId(song.uri.toString())
-                .setMediaMetadata(MediaMetadata.Builder().setTitle(song.title).setArtist(song.artist).setAlbumTitle(song.album).build()).build()
-        }
+    
+fun addSongs(newSongs: List<Song>, replace: Boolean = false) {
+    if (newSongs.isEmpty()) return
+
+    val oldSongs = songs
+    val merged = if (replace) {
+        newSongs.distinctBy { it.uri.toString() }
+    } else {
+        (oldSongs + newSongs).distinctBy { it.uri.toString() }
+    }
+
+    songs = merged
+
+    val items = (if (replace) merged else newSongs.filter { newSong ->
+        oldSongs.none { it.uri == newSong.uri }
+    }).map { song ->
+        MediaItem.Builder()
+            .setUri(song.uri)
+            .setMediaId(song.uri.toString())
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(song.title)
+                    .setArtist(song.artist)
+                    .setAlbumTitle(song.album)
+                    .build()
+            )
+            .build()
+    }
+
+    if (items.isEmpty()) return
+
+    if (replace || player.mediaItemCount == 0) {
         player.setMediaItems(items)
         player.prepare()
-        if (player.mediaItemCount > 0 && player.currentMediaItemIndex < 0) player.seekTo(0, 0)
+        if (player.mediaItemCount > 0) player.seekTo(0, 0)
+    } else {
+        player.addMediaItems(items)
     }
+}
 
     fun scanDevice() {
         val collection = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI

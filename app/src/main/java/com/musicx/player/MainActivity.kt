@@ -817,7 +817,13 @@ Button(
                 text = { if (playlists.isEmpty()) Text("Сначала создай плейлист во вкладке «Коллекции».") else Column { playlists.forEach { name -> TextButton(onClick = {
                     val key = "playlist_$name"; val set = (prefs.getStringSet(key, emptySet()) ?: emptySet()).toMutableSet(); songToAdd?.let { set.add(it.uri.toString()) }; prefs.edit().putStringSet(key, set).apply(); songToAdd = null
                 }) { Text(name) } } } }, confirmButton = { TextButton(onClick = { songToAdd = null }) { Text("Закрыть") } })
-            if (showNowPlaying && current != null) NowPlayingScreen(
+            if (current != null) {
+    AnimatedVisibility(
+        visible = showNowPlaying,
+        enter = fadeIn(tween(220)) + slideInVertically(tween(220)) { it / 8 },
+        exit = fadeOut(tween(180)) + slideOutVertically(tween(180)) { it / 10 }
+    ) {
+        NowPlayingScreen(
                 song = current, playing = isPlaying, position = position, duration = duration,
                 shuffle = player.shuffleModeEnabled, repeatMode = player.repeatMode, speed = speed,
                 onClose = { showNowPlaying = false },

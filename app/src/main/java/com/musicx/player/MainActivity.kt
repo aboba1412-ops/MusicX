@@ -836,6 +836,8 @@ Button(
 onPlaybackMode = { showPlaybackMode = true },
 onLyrics = { showNowPlaying = false; tab = "Тексты" }
             )
+            }
+}
             if (showSpeed) AlertDialog(onDismissRequest = { showSpeed = false }, title = { Text("Скорость воспроизведения") },
                 text = { Column { listOf(.75f, 1f, 1.25f, 1.5f, 2f).forEach { rate -> TextButton(onClick = { speed = rate; player.setPlaybackSpeed(rate); showSpeed = false }) { Text("${rate}×", color = if (speed == rate) Cyan else Color.White) } } } },
                 confirmButton = { TextButton(onClick = { showSpeed = false }) { Text("Закрыть") } })
